@@ -1,0 +1,12 @@
+h1{
+  color: #16ac5c;
+}
+
+.show{
+  color: #16ac5c;
+  display: block;
+}
+
+.hide{
+  display: none;
+}

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <title>hello</title>
+  </head>
+  <body>
+    <h1>hello tester</h1>
+    <input type="text" name="" value="" id="message" onkeyup="Ontyping()">
+    <button type="button" name="button" onclick="sendMessage()">send name</button>
+    <p id="chatbox"></p>
+    <p id="show-typing" class="hide"></p>
+  </body>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    var socket = io.connect('http://localhost:3000');
+    var hello;
+    function sendMessage(){
+      var message = document.getElementById('message').value;
+      socket.emit('sendToServer', { mes: message });
+      document.getElementById('message').value = '';
+    }
+
+      // $( "#message" ).change(function() {
+      //   console.log( "i am typing" );
+      // });
+    // var typing = false;
+    function Ontyping() {
+      var message = document.getElementById('message').value;
+      var canPublish = true;
+      if(canPublish) {
+        socket.emit('sendTypingToServer', { mes: message });
+
+        canPublish = false;
+        setTimeout(function() {
+          canPublish = true;
+        }, 200);
+      }
+    }
+
+    function Ontyping1() {
+
+    }
+
+    socket.on('sendToCLient', function (data) {
+      console.log(data);
+      document.getElementById('chatbox').append("\n" + data.hello);
+    });
+
+    socket.on('sendTypingToOthers', function (data) {
+      console.log(data);
+      var typingMes = '<p>' + data.userid + ' is typing</p>';
+      $('#show-typing').html(typingMes)
+                        .addClass('show')
+                          .removeClass('hide');
+
+        clearTimeout(hello);
+        hello = setTimeout(function(){
+        $('#show-typing').addClass('hide')
+                            .removeClass('show');
+      }, 900);
+
+    });
+
+    // socket.on('sendStopTypingToOthers', function (data) {
+    //   console.log(data);
+    //   var typingMes = '<p>' + data.userid + ' is typing</p>';
+    //   $('#show-typing').addClass('hide')
+    //                       .removeClass('show');
+    //   // setTimeout(function(){ }, 3000);
+    // });
+
+
+  </script>
+</html>
